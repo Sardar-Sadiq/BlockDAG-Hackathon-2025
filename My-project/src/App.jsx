@@ -1,39 +1,54 @@
-import React, { useState } from 'react';
-import LandingPage from './pages/LandingPage';
-import Dashboard from './pages/Dashboard';
-import RecoveryModal from './components/RecoveryModal';
+import { BrowserRouter as Router } from "react-router-dom";
+import MainRouter from "./pages/MainRouter";
+import { useState } from "react";
+// plus your states and connect/copy logic...
 
-const App = () => {
-  const [isConnected, setIsConnected] = useState(false);
-  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
-  const [walletAddress] = useState('0x742d35Cc5F6c7E42C66f...8934A2');
-  const [ethBalance] = useState('2.34');
-  const [qlkBalance] = useState('1,247.50');
+function App() {
+  const [walletAddress, setWalletAddress] = useState(null);
+  const [ethBalance, setEthBalance] = useState(null);
+  const [qlkBalance, setQlkBalance] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
 
-  const handleConnect = () => setTimeout(() => setIsConnected(true), 1000);
+  const handleConnect = async () => {
+    if (window.ethereum) {
+      try {
+        const accounts = await window.ethereum.request({
+          method: "eth_requestAccounts",
+        });
+        const address = accounts[0];
+        setWalletAddress(address);
+        setIsConnected(true);
+        // You can fetch balances here...
+      } catch (err) {
+        console.error("Connection failed:", err);
+      }
+    } else {
+      alert("Please install MetaMask");
+    }
+  };
+
   const handleCopy = () => {
-    navigator.clipboard.writeText(walletAddress);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    if (walletAddress) {
+      navigator.clipboard.writeText(walletAddress);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
   };
 
   return (
-    <>
-      {isConnected ? (
-        <Dashboard
-          walletAddress={walletAddress}
-          ethBalance={ethBalance}
-          qlkBalance={qlkBalance}
-          onCopy={handleCopy}
-          copied={copied}
-        />
-      ) : (
-        <LandingPage onConnect={handleConnect} onRecover={() => setShowRecoveryModal(true)} />
-      )}
-      {showRecoveryModal && <RecoveryModal onClose={() => setShowRecoveryModal(false)} />}
-    </>
+    <Router>
+      <MainRouter
+        isConnected={isConnected}
+        walletAddress={walletAddress}
+        ethBalance={ethBalance}
+        qlkBalance={qlkBalance}
+        copied={copied}
+        handleConnect={handleConnect}
+        handleCopy={handleCopy}
+      />
+    </Router>
   );
-};
+}
 
 export default App;
