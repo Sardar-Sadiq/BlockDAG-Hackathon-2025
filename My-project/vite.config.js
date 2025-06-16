@@ -7,4 +7,11 @@ export default defineConfig({
   plugins: [react(),
     tailwindcss(),
   ],
+  define: {
+    'process.env': {},
+  },
+  optimizeDeps: {
+  force: true,
+   include: ['viem', '@biconomy/account'],
+},
 })

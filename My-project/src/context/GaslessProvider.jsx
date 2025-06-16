@@ -1,5 +1,6 @@
-// src/context/GaslessProvider.jsx
-import { BiconomySmartAccount } from "@biconomy/account";
+
+import { BiconomySmartAccountV2 } from "@biconomy/account";
+
 import { ChainId } from "@biconomy/core-types";
 import { ethers } from "ethers";
 import { useEffect, useState, createContext, useContext } from "react";
@@ -16,7 +17,7 @@ export const GaslessProvider = ({ children }) => {
         await provider.send("eth_requestAccounts", []);
         const signer = provider.getSigner();
 
-        const smartAccount = new BiconomySmartAccount({
+        const smartAccount = new BiconomySmartAccountV2({
           signer,
           chainId: ChainId.POLYGON_MUMBAI,
         });
