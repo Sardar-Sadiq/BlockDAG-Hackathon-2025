@@ -1,7 +1,7 @@
 import { BrowserRouter as Router } from "react-router-dom";
 import MainRouter from "./pages/MainRouter";
 import { useState } from "react";
-// plus your states and connect/copy logic...
+import { GaslessProvider } from "./context/GaslessProvider"; // ⬅️ Import GaslessProvider
 
 function App() {
   const [walletAddress, setWalletAddress] = useState(null);
@@ -37,17 +37,19 @@ function App() {
   };
 
   return (
-    <Router>
-      <MainRouter
-        isConnected={isConnected}
-        walletAddress={walletAddress}
-        ethBalance={ethBalance}
-        qlkBalance={qlkBalance}
-        copied={copied}
-        handleConnect={handleConnect}
-        handleCopy={handleCopy}
-      />
-    </Router>
+    <GaslessProvider>
+      <Router>
+        <MainRouter
+          isConnected={isConnected}
+          walletAddress={walletAddress}
+          ethBalance={ethBalance}
+          qlkBalance={qlkBalance}
+          copied={copied}
+          handleConnect={handleConnect}
+          handleCopy={handleCopy}
+        />
+      </Router>
+    </GaslessProvider>
   );
 }
 
